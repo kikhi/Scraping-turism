@@ -25,11 +25,12 @@ driver.get('https://www.airbnb.mx/')
 sleep(5)
 
 # ACTIONS
+"""
 WebDriverWait(driver, 5)\
     .until(EC.element_to_be_clickable((By.XPATH,
                                       '//*[@class="l1ovpqvx c1b3fvnw dir dir-ltr"]')))\
     .click()
-
+"""
 WebDriverWait(driver, 5)\
     .until(EC.element_to_be_clickable((By.XPATH,
                                       '//*[@data-index="0"]')))\
@@ -49,20 +50,27 @@ WebDriverWait(driver, 5)\
 sleep(5)
 
 # BUILD DOCUMENT
-paginas = driver.find_elements(By.XPATH, '//a[@class="l1ovpqvx c1ackr0h dir dir-ltr"]')
+paginas = driver.find_elements(By.XPATH, '//a[@class="l1ovpqvx atm_1y33qqm_1ggndnn_10saat9 atm_17zvjtw_zk357r_10saat9 atm_w3cb4q_il40rs_10saat9 c1ackr0h atm_c8_fkimz8 atm_g3_11yl58k atm_fr_4ym3tx atm_cs_qo5vgd atm_9s_1txwivl atm_h_1h6ojuz atm_fc_1h6ojuz atm_bb_idpfg4 atm_3f_glywfm atm_5j_1ssbidh atm_26_1j28jx2 atm_7l_18pqv07 atm_vy_1vi7ecw atm_e2_1vi7ecw atm_gi_idpfg4 atm_gz_logulu atm_h0_logulu atm_l8_idpfg4 atm_uc_1dtz4sb atm_kd_glywfm atm_uc_glywfm__p88qr9 atm_26_1nh1gcj_1nos8r_uv4tnr atm_tr_kv3y6q_csw3t1 atm_26_1nh1gcj_csw3t1 atm_9j_73adwj_1o5j5ji atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_uc_x37zl0_1w3cfyq atm_26_1nh1gcj_1w3cfyq atm_70_1o9v3ru_1w3cfyq atm_uc_glywfm_1w3cfyq_p88qr9 atm_uc_x37zl0_18zk5v0 atm_26_1nh1gcj_18zk5v0 atm_70_1o9v3ru_18zk5v0 atm_uc_glywfm_18zk5v0_p88qr9 dir dir-ltr"]')
 pagina_texto = [pagina.text for pagina in paginas]
 numero_mayor = min(pagina_texto)
 numero_mayor = int(numero_mayor)
 print("Longitud de titulos_texto:", numero_mayor)
 enlaces = []
 
+print(numero_mayor)
 for x in range(1, numero_mayor + 1):
     print("Pagina ", x)
+    sleep(5) 
 
     for titulos in driver.find_elements(By.XPATH, '//div[@data-testid="card-container"]'):
         enlace = titulos.find_element(By.XPATH, './/a').get_attribute('href')
         enlaces.append(enlace)
         print(enlace)
+    
+    WebDriverWait(driver, 5)\
+    .until(EC.element_to_be_clickable((By.XPATH,
+                                        '//*[@class="l1ovpqvx atm_1y33qqm_1ggndnn_10saat9 atm_17zvjtw_zk357r_10saat9 atm_w3cb4q_il40rs_10saat9 c1ytbx3a atm_mk_h2mmj6 atm_9s_1txwivl atm_h_1h6ojuz atm_fc_1h6ojuz atm_bb_idpfg4 atm_26_1j28jx2 atm_3f_glywfm atm_7l_18pqv07 atm_gi_idpfg4 atm_l8_idpfg4 atm_uc_1dtz4sb atm_kd_glywfm atm_gz_xvenqj atm_uc_glywfm__p88qr9 atm_26_1nh1gcj_1rqz0hn_uv4tnr atm_tr_kv3y6q_csw3t1 atm_26_1nh1gcj_1ul2smo atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_70_glywfm_1w3cfyq atm_uc_x37zl0_9xuho3 atm_70_216vci_9xuho3 atm_26_1nh1gcj_9xuho3 atm_uc_glywfm_9xuho3_p88qr9 atm_70_glywfm_18zk5v0 atm_uc_x37zl0_fiqcvf atm_70_216vci_fiqcvf atm_26_1nh1gcj_fiqcvf atm_uc_glywfm_fiqcvf_p88qr9 atm_7l_161hw1_1o5j5ji atm_9j_13gfvf7_1o5j5ji atm_26_1j28jx2_154oz7f atm_92_1yyfdc7_vmtskl atm_9s_1ulexfb_vmtskl atm_mk_stnw88_vmtskl atm_tk_1ssbidh_vmtskl atm_fq_1ssbidh_vmtskl atm_tr_pryxvc_vmtskl atm_vy_1vi7ecw_vmtskl atm_e2_1vi7ecw_vmtskl atm_5j_1ssbidh_vmtskl atm_mk_h2mmj6_1ko0jae dir dir-ltr"]')))\
+    .click()
 
 titulos_texto_total = []
 tipo_texto_total = []
