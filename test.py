@@ -1,59 +1,48 @@
-from time import sleep
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager # pip install webdriver-manager
-from selenium.webdriver.common.keys import Keys
+import requests
+from bs4 import BeautifulSoup  # Asegúrate de tener instalada la biblioteca BeautifulSoup (pip install beautifulsoup4)
 import pandas as pd
 
+# URL de la página a la que queremos hacer scraping
+url = 'https://www.airbnb.mx/s/Tijuana--Baja-California--M%C3%A9xico/homes?tab_id=home_tab&refinement_paths%5B%5D=%2Fhomes&flexible_trip_lengths%5B%5D=one_week&monthly_start_date=2024-02-01&monthly_length=3&price_filter_input_type=0&channel=EXPLORE&query=Tijuana%2C%20B.C.&place_id=ChIJ03tYJgI52YARViTmpK9LchQ&date_picker_type=calendar&source=structured_search_input_header&search_type=autocomplete_click'
 
-opts = Options()
-opts.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36")
-driver = webdriver.Chrome(
-    service=Service('C:\\Users\\catg_\\OneDrive\\Desktop\\OTBC\\Generador Expedia\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe'),
-    options=opts
-)
+# Realizamos la solicitud HTTP
+response = requests.get(url)
 
-driver.get("https://www.booking.com/hotel/mx/hacienda-del-rio.es-mx.html?aid=2369661&label=msn-g8oUdDjZhFsaZPM5Pleo8A-80127097831937%3Atikwd-80127272512999%3Aloc-119%3Aneo%3Amte%3Alp151132%3Adec%3Aqsbooking&sid=416a71d6a9f86581f6f89a55142a27a4&all_sr_blocks=41776801_369885614_2_0_0;checkin=2024-01-17;checkout=2024-01-18;dest_id=-1705741;dest_type=city;dist=0;group_adults=2;group_children=0;hapos=1;highlighted_blocks=41776801_369885614_2_0_0;hpos=1;matching_block_id=41776801_369885614_2_0_0;no_rooms=1;req_adults=2;req_children=0;room1=A%2CA;sb_price_type=total;sr_order=popularity;sr_pri_blocks=41776801_369885614_2_0_0__208250;srepoch=1705530009;srpvid=21419d06cb57014b;type=total;ucfs=1&#tab-reviews")
-driver.maximize_window()
+# Verificamos si la solicitud fue exitosa (código de estado 200)
+if response.status_code == 200:
+    # Parseamos el contenido HTML de la página usando BeautifulSoup
+    soup = BeautifulSoup(response.text, 'html.parser')
 
-titulos_texto_total = []
-ratings_texto_total = []
-personal_texto_total = []
-instalaciones_texto_total = []
+    # Extraemos todos los elementos con el tipo y atributo especificados
+    card_containers = soup.find_all('div', {'data-testid': 'card-container'})
 
-sleep(5)
+    # Verificamos si encontramos algún elemento
+    if card_containers:
+        # Creamos una lista para almacenar los títulos
+        titulos = []
 
-# START
-driver.execute_script("window.scrollBy(0, 5000);")
+        # Iteramos sobre los elementos y añadimos sus textos a la lista
+        for card_container in card_containers:
+            titulos.append(card_container.text)
 
-titulos = driver.find_elements(By.XPATH, '//*[@class="d2fee87262 pp-header__title"]')
-ratings = driver.find_elements(By.XPATH, '//*[@data-testid="review-score-component"]')
+        # Creamos el DataFrame utilizando la lista de títulos
+        datos = pd.DataFrame({
+            'Titulo': titulos
+        })
 
-titulos_texto_total.extend([titulo.text for titulo in titulos])
-ratings_texto_total.extend([rating.text for rating in ratings])
+        # Guardamos el DataFrame en un archivo CSV
+        datos.to_csv('expedia-data.csv', index=True, na_rep='-')
 
-print("Longitud de titulos_texto:", len(titulos_texto_total))
-print("Longitud de titulos_texto:", len(ratings_texto_total))
-    
+        print('Datos guardados correctamente en expedia-data.csv')
+    else:
+        print('No se encontraron elementos con el atributo data-testid="card-container"')
+else:
+    print(f'Error en la solicitud. Código de estado: {response.status_code}')
 
-sleep(5)
-WebDriverWait(driver, 5)\
-.until(EC.element_to_be_clickable((By.XPATH,
-                                  '//*[@data-testid="review-score-component"]')))\
-.click()
 
-sleep(5)
 
-personals = driver.find_elements(By.XPATH, '//*[@id=":r1o:-label"]')
-instalaciones = driver.find_elements(By.XPATH, '//*[@id=":r1p:-label"]')
+datos = pd.DataFrame({
+    'Titulo': titulos
+})
 
-personal_texto_total.extend([personal.text for personal in personals])
-instalaciones_texto_total.extend([instalacion.text for instalacion in instalaciones])
-
-print("Longitud de titulos_texto:", len(titulos_texto_total))
-
-sleep(100000)
+datos.to_csv('expedia-data.csv', index=True, na_rep='-')
